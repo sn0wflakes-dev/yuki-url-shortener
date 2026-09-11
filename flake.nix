@@ -1,5 +1,5 @@
 {
-  description = "personal flakes template - change this to proj desc";
+  description = "Yuki URL shortener flake";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
@@ -15,7 +15,19 @@
       ];
 
       shellHook = ''
-        # insert custom command
+        echo "cleaning .env file"
+        sed -i '/^[[:space:]]*$/N;/^\n$/D' .env
+
+        echo "load .env file"
+        if [ -f .env ]; then
+            set -a
+            source .env
+            set +a
+            echo ".env file loaded successfully!"
+        else
+            echo "Could not load .env file. File not found"
+        fi
+        echo "dev env is fully set!"
       '';
     };
   };
