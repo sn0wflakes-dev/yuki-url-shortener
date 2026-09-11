@@ -91,6 +91,8 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
 
     @Override
     public String retrieveUrl(RedirectUrlRequest request) {
+        validationService.validate(request);
+
         String url  = request.getUrl();
         String cache = cacheService.get(url);
 
