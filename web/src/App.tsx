@@ -72,7 +72,7 @@ function App() {
 
                 <Input
                   label='Alias (Optional)'
-                  type='url'
+                  type='text'
                   name='alias'
                   value={alias}
                   onChange={(event) => {

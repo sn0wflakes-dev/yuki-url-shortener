@@ -36,7 +36,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             disabled={disabled}
-            className={`w-full px-3.5 py-2.5 rounded-sm text-sm ${borderInput} ${bgClass} ${className}`}
+            className={`w-full px-3.5 py-2.5 rounded-sm border text-sm ${borderInput} ${bgClass} ${className}`}
           />
 
           {rightElement && (
