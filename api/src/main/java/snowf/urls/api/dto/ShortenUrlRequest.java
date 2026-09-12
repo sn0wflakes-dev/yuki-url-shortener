@@ -14,6 +14,5 @@ public class ShortenUrlRequest {
     @NotBlank(message = "Long URL field is required")
     private String longUrl;
 
-    @NotBlank(message = "Alias can't be empty")
     private String alias;
 }

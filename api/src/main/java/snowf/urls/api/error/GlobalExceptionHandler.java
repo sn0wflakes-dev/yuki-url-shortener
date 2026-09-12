@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
          * */
         try {
             ThreadContext.put("violationList", objectMapper.writeValueAsString(violationList));
-            log.error("Failed to make request. Reason : Invalid request");
+            log.error("Failed to make request. Reason : {}", ex.getMessage());
         } finally {
             ThreadContext.remove("violationList");
         }
@@ -56,6 +56,7 @@ public class GlobalExceptionHandler {
                         .header(WebResponse.MessageHeader.builder()
                                 .requestId(requestId)
                                 .timestamp(OffsetDateTime.now().toString())
+                                .message("Validation error")
                                 .path(http.getRequestURI())
                                 .build())
                         .errors(WebResponse.Errors.builder()

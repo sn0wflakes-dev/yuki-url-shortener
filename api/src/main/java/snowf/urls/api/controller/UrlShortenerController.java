@@ -1,6 +1,8 @@
 package snowf.urls.api.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,6 @@ import java.time.Instant;
 
 @Controller
 public class UrlShortenerController {
-
     private static final String REQ_ID_HEADER = "X-Request-ID";
 
     private final UrlShortenerService service;
@@ -36,7 +37,6 @@ public class UrlShortenerController {
             @RequestBody ShortenUrlRequest request,
             HttpServletRequest httpServlet) {
         String requestId = httpServlet.getHeader(REQ_ID_HEADER);
-
         ShortenUrlResponse response = service.shortenUrl(request);
 
         WebResponse<ShortenUrlResponse> apiResponse = WebResponse.<ShortenUrlResponse>builder()
