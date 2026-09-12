@@ -45,7 +45,7 @@ function App() {
 
   return (
     <>
-      <div className="flex flex-col justify-center-safe items-center h-screen w-full bg-ctp-crust">
+      <div className="flex flex-col justify-center-safe items-center h-screen w-full bg-ctp-base">
         <div className='w-[70%] md:w-[70%] lg:w-[45%]'>
 
           <div id="text-header">
