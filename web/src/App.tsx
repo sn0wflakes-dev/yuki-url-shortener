@@ -6,9 +6,22 @@ import { shortenUrl } from './api/services/shorten-url-service.ts';
 
 function App() {
   const [longUrl, setLongUrl] = useState('');
-  const [alias, setAlias] = useState('');
+  const [alias, setAlias] = useState(null);
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
+  const [copy, setCopy] = useState(false);
+
+  const handleCopy = async () => {
+    if (!result) return;
+
+    await navigator.clipboard.writeText(result);
+
+    setCopy(true);
+
+    setTimeout(() => {
+      setCopy(false);
+    }, 10000);
+  }
 
   const handleFormSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -62,7 +75,10 @@ function App() {
                   type='url'
                   name='alias'
                   value={alias}
-                  onChange={(event) => setAlias(event.target.value)}
+                  onChange={(event) => {
+                    const alias = event.target.value;
+                    setAlias(alias.trim() === '' ? null : alias);
+                  }}
                   placeholder='/alias'
                   className='min-w-0 flex-3'
                 ></Input>
@@ -75,14 +91,17 @@ function App() {
                     type='url'
                     name='result'
                     disabled={true}
-                    value={"Test 123"}
+                    value={result}
                     placeholder=""
                     className='min-w-0 flex-3'
                     rightElement={
                       <Button
                         type='button'
-                        onClick={() => navigator.clipboard.writeText(result)}
-                        className='px-3.5 text-sm font-semibold text-ctp-blue-500 hover:text-ctp-blue-800'>Copy Link</Button>
+                        onClick={handleCopy}
+                        className='px-3.5 text-sm font-semibold text-ctp-blue-500 hover:text-ctp-blue-800'>{copy
+                          ? "Copied"
+                          : "Copy Link"}
+                      </Button>
                     }
                   ></Input>
                 </div>
@@ -92,7 +111,7 @@ function App() {
             <Button
               type='submit'
               disabled={loading}
-              className='mt-8 px-2 rounded-sm py-2 w-full font-bold'
+              className='mt-8 px-2 rounded-sm py-2 w-full font-bold bg-ctp-yellow-500 text-ctp-crust hover:bg-ctp-yellow-600'
             >{loading ? "Shortening..." : "Shorten Link"}</Button>
 
           </form>
