@@ -1,120 +1,103 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import './index.css';
+import Button from "./components/Button.tsx";
+import { Input } from './components/Input.tsx';
+import { useState } from 'react';
+import { shortenUrl } from './api/services/shorten-url-service.ts';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [longUrl, setLongUrl] = useState('');
+  const [alias, setAlias] = useState('');
+  const [result, setResult] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleFormSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    setLoading(true);
+    setResult('');
+
+    try {
+      const response = await shortenUrl({
+        longUrl: longUrl,
+        alias: alias
+      });
+
+      setResult(response.data.url);
+    } catch (error) {
+      console.error("Failed to fetch data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      <div className="flex flex-col justify-center-safe items-center h-screen w-full bg-ctp-crust">
+        <div className='w-[70%] md:w-[70%] lg:w-[45%]'>
 
-      <div className="ticks"></div>
+          <div id="text-header">
+            <h1 className='text-3xl text-ctp-yellow-500 font-semibold text-center'>Yuki URL Shortener</h1>
+            <h3 className='text-xl text-ctp-subtext1 text-center mt-4'>Make Your Loooong URL More Readable and Easy to Remember.</h3>
+          </div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+          <form
+            id='url-text-form'
+            onSubmit={handleFormSubmit}
+            className='px-6 py-6 mt-8 bg-ctp-surface0 gap-2.5 rounded-md w-full'>
+            <div>
+              <div className='flex flex-col gap-2.5 md:flex-row'>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+                <Input
+                  label='Long URL'
+                  type='url'
+                  name='longUrl'
+                  value={longUrl}
+                  onChange={(event) => setLongUrl(event.target.value)}
+                  placeholder='https://example.com/very/long/url'
+                  className='min-w-0 flex-7'
+                ></Input>
+
+                <Input
+                  label='Alias (Optional)'
+                  type='url'
+                  name='alias'
+                  value={alias}
+                  onChange={(event) => setAlias(event.target.value)}
+                  placeholder='/alias'
+                  className='min-w-0 flex-3'
+                ></Input>
+
+              </div>
+              {result && (
+                <div className='mt-4'>
+                  <Input
+                    label='Result'
+                    type='url'
+                    name='result'
+                    disabled={true}
+                    value={"Test 123"}
+                    placeholder=""
+                    className='min-w-0 flex-3'
+                    rightElement={
+                      <Button
+                        type='button'
+                        onClick={() => navigator.clipboard.writeText(result)}
+                        className='px-3.5 text-sm font-semibold text-ctp-blue-500 hover:text-ctp-blue-800'>Copy Link</Button>
+                    }
+                  ></Input>
+                </div>
+              )}
+            </div>
+
+            <Button
+              type='submit'
+              disabled={loading}
+              className='mt-8 px-2 rounded-sm py-2 w-full font-bold'
+            >{loading ? "Shortening..." : "Shorten Link"}</Button>
+
+          </form>
+        </div>
+      </div>
     </>
   )
 }
