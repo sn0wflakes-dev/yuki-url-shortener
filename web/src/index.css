@@ -1,2 +1,14 @@
 @import "tailwindcss";
 @import "@catppuccin/tailwindcss/mocha.css";
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-ctp-surface1) inset !important;
+  -webkit-text-fill-color: var(--color-ctp-text) !important;
+  caret-color: var(--color-ctp-text);
+
+  border-color: transparent !important;
+  outline: none !important;
+}
