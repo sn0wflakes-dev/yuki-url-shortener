@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js"
+import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js"
 import { shortenUrl } from "../services/shorten-url-service";
 import { log } from "../application/log";
 
@@ -27,7 +27,7 @@ export default {
 
      await interaction.reply({
        content: `Here your shortened url : ${result.data.url}`,
-       ephemeral: true
+       flags: MessageFlags.Ephemeral,
      });
 
     } catch (error) {
