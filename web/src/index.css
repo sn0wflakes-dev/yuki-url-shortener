@@ -9,6 +9,6 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: var(--color-ctp-text) !important;
   caret-color: var(--color-ctp-text);
 
-  border-color: transparent !important;
+  border: none !important;
   outline: none !important;
 }
