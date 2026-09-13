@@ -24,7 +24,7 @@ export class ModuleRegistry {
         log.warn(`[ModuleRegistry] : Skipped, there is no data/execute on ${file}`);
         continue;
       }
-      command.set(command.data.name, {data: command.data, execute: command.execute});
+      commands.set(command.data.name, {data: command.data, execute: command.execute});
     }
 
     this.commandCache = commands;
