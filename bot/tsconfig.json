@@ -1,8 +1,18 @@
-{
+{{
   "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "jsxImportSource": "hono/jsx",
+    "lib": ["ES2022"],
+    "outDir": "./dist",
+    "rootDir": "./src",
     "strict": true,
-    "types": ["bun"],
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
-  }
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
+  },
+
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
