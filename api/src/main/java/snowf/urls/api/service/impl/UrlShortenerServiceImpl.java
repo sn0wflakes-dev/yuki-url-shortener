@@ -100,16 +100,22 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
             return cache;
         }
 
-        Optional<UrlEntity> entity = Optional.of(repository.findByAlias(url).orElseGet(
-                () -> {
-                    if (url.replaceAll("[^a-zA-Z0-9]", "").length() <= 10) {
-                        repository.findById(String.valueOf(Base62Util.decode(url))).orElseThrow(
-                                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "URL Not Found")
-                        );
-                    }
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "URL Not Found");
+        Optional<UrlEntity> entity = repository.findByAlias(url);
+
+        if (entity.isEmpty()) {
+            try {
+                String cleanedUrl = url.replaceAll("[^a-zA-Z0-9]", "");
+                if (cleanedUrl.length() <= 10) {
+                    entity = repository.findById(String.valueOf(Base62Util.decode(cleanedUrl)));
                 }
-        ));
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        }
+
+        if (entity.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "URL Not Found");
+        }
 
         return entity.get().getLongUrl();
     }

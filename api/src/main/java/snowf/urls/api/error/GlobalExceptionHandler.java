@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
         this.objectMapper = objectMapper;
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(ConstraintViolationException.class)
+    @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<WebResponse<String>> validationEx(ConstraintViolationException ex, HttpServletRequest http) {
         String requestId = http.getHeader(REQ_ID_HEADER);
         List<Map<String, String>> violationList = ex.getConstraintViolations().stream()

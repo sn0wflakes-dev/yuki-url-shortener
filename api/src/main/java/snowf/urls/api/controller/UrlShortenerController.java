@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.view.RedirectView;
 import snowf.urls.api.dto.RedirectUrlRequest;
 import snowf.urls.api.dto.ShortenUrlRequest;
 import snowf.urls.api.dto.ShortenUrlResponse;
@@ -21,7 +23,9 @@ import java.time.Instant;
 
 @Controller
 public class UrlShortenerController {
+
     private static final String REQ_ID_HEADER = "X-Request-ID";
+    private static final Logger log = LogManager.getLogger(UrlShortenerController.class);
 
     private final UrlShortenerService service;
 
@@ -55,12 +59,16 @@ public class UrlShortenerController {
     @GetMapping(
             path = "/{shortUrl}"
     )
-    public String redirectUrlEndpoint(
+    public RedirectView redirectUrlEndpoint(
             @PathVariable String shortUrl) {
 
         RedirectUrlRequest urlRequest = new RedirectUrlRequest(shortUrl);
 
-        return "redirect:"+service.retrieveUrl(urlRequest);
+        try {
+            return new RedirectView(service.retrieveUrl(urlRequest));
+        } catch (ResponseStatusException e) {
+            return new RedirectView("http://localhost:3000/not-found");
+        }
     }
 
 
