@@ -1,6 +1,6 @@
 export interface UrlRequest {
   longUrl: string;
-  alias: string;
+  alias: string | null;
 }
 
 export interface UrlResponse {

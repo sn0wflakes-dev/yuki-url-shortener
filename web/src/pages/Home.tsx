@@ -5,7 +5,7 @@ import Button from "../components/Button";
 
 function Home() {
   const [longUrl, setLongUrl] = useState('');
-  const [alias, setAlias] = useState(null);
+  const [alias, setAlias] = useState<string | null>(null);
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
   const [copy, setCopy] = useState(false);
@@ -36,7 +36,7 @@ function Home() {
 
       setResult(response.data.url);
     } catch (error) {
-      console.error("Failed to fetch data");
+      console.error("Failed to fetch data", error);
     } finally {
       setLoading(false);
     }
@@ -73,7 +73,7 @@ function Home() {
                   label='Alias (Optional)'
                   type='text'
                   name='alias'
-                  value={alias}
+                  value={alias ?? ""}
                   onChange={(event) => {
                     const alias = event.target.value;
                     setAlias(alias.trim() === '' ? null : alias);
