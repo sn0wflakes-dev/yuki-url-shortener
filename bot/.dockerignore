@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+.bun/
+
+# Build and Output
+dist/
+build/
+.out/
+
+# Development and Configuration
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+.github/
+.vscode/
+
+# Logs and Runtime
+*.log
+.npm/
+.eslintcache
+.prettiercache
+
+# Docker
+Docker*
+docker-compose*
+
+# OS Files
+.DS_Store
+Thumbs.db
