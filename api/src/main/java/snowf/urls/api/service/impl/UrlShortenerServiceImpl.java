@@ -52,9 +52,14 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
 
         if (existing.isPresent()) {
             if (existing.get().getAlias() != null) {
+                cacheService.put(existing.get().getAlias(), request.getLongUrl());
                 return toShortenUrlResponse(existing.get().getAlias());
             }
-            return toShortenUrlResponse(Base62Util.encode(BigInteger.valueOf(existing.get().getId())));
+
+            String shortUrl = Base62Util.encode(BigInteger.valueOf(existing.get().getId()));
+            cacheService.put(shortUrl, request.getLongUrl());
+
+            return toShortenUrlResponse(shortUrl);
         }
 
         UrlEntity urlEntity = new UrlEntity();
@@ -116,6 +121,8 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
         if (entity.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "URL Not Found");
         }
+
+        cacheService.put(request.getUrl(), entity.get().getLongUrl());
 
         return entity.get().getLongUrl();
     }
