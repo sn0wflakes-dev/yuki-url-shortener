@@ -1,11 +1,12 @@
 {
-  description = "Yuki URL shortener flake";
+  description = "url shortener flake";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
   };
 
-  outputs = {nixpkgs, ...}: let
+  outputs = {nixpkgs, ...}:
+  let
     system = "x86_64-linux";
     pkgs = import nixpkgs {inherit system; };
   in {
@@ -15,19 +16,23 @@
       ];
 
       shellHook = ''
-        echo "cleaning .env file"
-        sed -i '/^[[:space:]]*$/N;/^\n$/D' .env
+        # Shell function for load .env from target
+        load_dotenv() {
+          TARGET_ENV="$1"
 
-        echo "load .env file"
-        if [ -f .env ]; then
+          sed -i 's/\r$//' "$TARGET_ENV"
+
+          echo "load .env file from $TARGET_ENV"
+          if [ -f "$TARGET_ENV" ]; then
+            echo "Found .env at $TARGET_ENV"
             set -a
-            source .env
+            source "$TARGET_ENV"
             set +a
-            echo ".env file loaded successfully!"
-        else
+            echo ".env file successfully loaded from $TARGET_ENV !"
+          else
             echo "Could not load .env file. File not found"
-        fi
-        echo "dev env is fully set!"
+          fi
+        }
       '';
     };
   };
