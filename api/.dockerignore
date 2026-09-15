@@ -1,0 +1,31 @@
+# --- Version Control ---
+.git
+.gitignore
+.gitattributes
+
+# --- IDEs and Text Editors ---
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+*.swp
+*.swo
+
+# --- Build Tools & Output Directories ---
+# For Maven: Ignores the target folder except the generated JAR artifact if using standard COPY
+target/
+!target/*.jar
+target/surefire-reports/
+target/failsafe-reports/
+
+# --- Local Environment and Configuration ---
+.env
+.env.*
+docker-compose*.yml
+Dockerfile
+
+# --- Operating System Files ---
+.DS_Store
+Thumbs.db
