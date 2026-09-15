@@ -18,3 +18,6 @@ spring:
     baseline-on-migrate: true
 server:
   port: ${API_PORT}
+
+app:
+  public-api-url: ${API_PUBLIC_URL}

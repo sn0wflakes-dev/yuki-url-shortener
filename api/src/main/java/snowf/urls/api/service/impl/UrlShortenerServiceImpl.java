@@ -3,11 +3,13 @@ package snowf.urls.api.service.impl;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 import snowf.urls.api.dto.RedirectUrlRequest;
 import snowf.urls.api.dto.ShortenUrlRequest;
 import snowf.urls.api.dto.ShortenUrlResponse;
@@ -23,6 +25,9 @@ import java.util.Optional;
 
 @Service
 public class UrlShortenerServiceImpl implements UrlShortenerService {
+
+    @Value("${app.public-api-url}")
+    private String publicApiUrl;
 
     private static final String REQ_ID_HEADER = "X-Request-ID";
 
@@ -83,13 +88,14 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
     }
 
     private ShortenUrlResponse toShortenUrlResponse(String shortUrl) {
-        UriComponents uri = ServletUriComponentsBuilder.fromCurrentRequestUri().build();
+        String uri = UriComponentsBuilder
+                .fromUriString(publicApiUrl)
+                .path("/{shortUrl}")
+                .buildAndExpand(shortUrl)
+                .toUriString();
+
         return ShortenUrlResponse.builder()
-                .url(String.format("%s://%s:%d/%s",
-                        uri.getScheme(),
-                        uri.getHost(),
-                        uri.getPort(),
-                        shortUrl))
+                .url(uri)
                 .shortUrl(shortUrl)
                 .build();
     }
