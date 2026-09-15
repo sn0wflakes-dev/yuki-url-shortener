@@ -6,7 +6,13 @@
 
 - [About the Project](#about-the-project)
 - [Built With](#built-with)
+- [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
+   - [Prerequisites](#prerequisites)
+   - [Running with Docker (Recommended)](#running-with-docker-recommended)
+   - [Running Manually](#running-manually)
+   - [Using the Nix Flake (NixOS / Nix users)](#using-the-nix-flake-nixos--nix-users)
+- [Environment Variables](#environment-variables)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
@@ -42,41 +48,131 @@ own port.
 [![Docker container][Docker]][docker-link]
 [![Nix Flake][NixOS]][nix-link]
 
-## Getting Started
+## Project Structure
 
-Follow these instructions to set up your project locally.
+This project is organized as a monorepo with three independent services, each with its own stack:
+
+```
+yuki-url/
+├── web/     # React + Vite (frontend)
+├── api/     # Spring Boot (public API)
+├── bot/     # Hono + Bun + discord.js (Discord bot)
+├── redis/   # Redis config (redis.conf, users.acl)
+└── docker-compose.yml
+```
+
+| Service | Stack             | Purpose               |
+|---------|--------------------|------------------------|
+| `web`   | React, Vite, Bun   | Web interface          |
+| `api`   | Spring Boot, Java  | Public REST API        |
+| `bot`   | Hono, Bun, discord.js | Discord bot         |
+
+## Getting Started
 
 ### Prerequisites
 
-There are several SDK you need to install
+- **Docker & Docker Compose** — recommended way to run the full stack
+- **Bun** (only needed if running `web`/`bot` outside Docker)
+  ```sh
+  curl -fsSL https://bun.com/install | bash
 
-**Bun JS**
+  # Ensure the version is 1.3.13
+  bun --version
+  ```
+- **JDK 21 & Maven** (only needed if running `api` outside Docker)
 
-```bash
-curl -fsSL https://bun.com/install | bash
-
-# Ensure the version is 1.3.13
-bun --version
-```
-
-### Installation
+### Running with Docker (Recommended)
 
 1. Clone the repo
    ```sh
-   git clone https://github.com
+   git clone https://github.com/<your-username>/yuki-url.git
+   cd yuki-url
    ```
-2. Install packages
+2. Create file users.acl for Redis
    ```sh
-   npm install
+   cp redis/users.acl.example redis/users.acl
+   
+   # Read the instruction inside config file
+   nano/nvim/vim redis/users.acl
    ```
+   
+3. Copy and fill in environment files
+   ```sh
+   cp .env.example .env
+   cp bot/.env.example bot/.env
+   ```
+4. Start all services
+   ```sh
+   docker compose up --build
+   ```
+5. Services will be available at:
+   - Web: `http://localhost:3000`
+   - API: `http://localhost:${API_PORT}`
+   - Bot: connects to Discord directly, no exposed port
+
+To stop everything:
+```sh
+docker compose down
+```
+
+### Running Manually
+
+Each service can also be run independently for local development.
+
+**Web**
+```sh
+cd web
+bun install
+bun run dev
+```
+
+**API**
+```sh
+cd api
+mvn spring-boot:run
+```
+
+**Bot**
+```sh
+cd bot
+bun install
+bun run start
+```
+
+> Note: when running manually, make sure `postgres` and `redis` are still available (either via `docker compose up postgres redis` or a local install), and that `api`/`bot` `.env` values point to the correct hosts (e.g. `localhost` instead of Docker service names).
+
+### Using the Nix Flake (NixOS / Nix users)
+
+If you're on NixOS or have Nix installed, a `flake.nix` is provided for a reproducible dev shell (useful for [Running Manually](#running-manually) — not required for the Docker workflow).
+
+```sh
+nix develop
+```
+
+The shell exposes a helper function, `load_dotenv`, to inject a `.env` file's variables into your current shell session:
+
+```sh
+load_dotenv .env          # loads root .env (for api-related vars)
+load_dotenv bot/.env      # loads bot .env
+```
+
+> **Important:** environment variables loaded this way only exist in the shell session where you ran `load_dotenv`. If you run `mvn spring-boot:run` or `bun run start` **manually** (outside Docker), you must run `load_dotenv` first in that same terminal, or the service won't see `DATABASE_URL`, `DISCORD_TOKEN`, etc.
+>
+> This step is **not needed when using Docker Compose** — Compose reads `.env` (and each service's `env_file`) on its own, regardless of your OS or shell. `load_dotenv` is purely a convenience for local/manual development inside the Nix shell.
+
+## Environment Variables
+
+Each service reads its own configuration:
+
+- **`api`** — `API_PORT`, `DATABASE_URL`, `DATABASE_USERNAME`, `DATABASE_PASSWORD`, `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
+- **`bot`** — Discord token, application ID, and API URL (see `bot/.env.example`)
+- **`web`** — `VITE_API_URL` (baked in at build time, see `web/.env.example`)
+
+> `.env` files are gitignored and never committed. See each service's `.env.example` for the required keys.
 
 ## Usage
 
-Provide instructions and examples on how to use your project.
-
-```sh
-npm run start
-```
+With the stack running via Docker Compose, open the web interface at `http://localhost:3000` to shorten a URL, or interact with the Discord bot in your server.
 
 ## Contributing
 

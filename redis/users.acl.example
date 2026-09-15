@@ -1,0 +1,6 @@
+# Read this first
+# Replace the <...> with username and password
+# After replacing all placeholder, delete all comment (starting with #)
+user default off
+user <username> on ><password> ~* &* +@all
+user <username_app> on ><password_app> ~* &* +@read +@write +DEL
