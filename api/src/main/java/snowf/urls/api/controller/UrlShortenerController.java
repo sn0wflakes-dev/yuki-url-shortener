@@ -25,7 +25,6 @@ import java.time.Instant;
 public class UrlShortenerController {
 
     private static final String REQ_ID_HEADER = "X-Request-ID";
-    private static final Logger log = LogManager.getLogger(UrlShortenerController.class);
 
     private final UrlShortenerService service;
 
